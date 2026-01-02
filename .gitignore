@@ -1,0 +1,17 @@
+# Python artifacts
+__pycache__/
+*.pyc
+
+# Virtual Environment
+venv/
+env/
+
+# Database (Optional: usually we don't commit local DBs)
+*.db
+
+# Environment variables (Crucial for your API Keys later)
+.env
+
+# IDE settings
+.vscode/
+.idea/
