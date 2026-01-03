@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="min-h-[80vh] flex items-center justify-center py-10">
+    <div class="absolute inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]"></div>
+    <div class="absolute top-20 left-20 -z-10 w-96 h-96 bg-green-200 rounded-full blur-[100px] opacity-30"></div>
+
+    <div class="glass-card w-full max-w-lg p-8 rounded-2xl shadow-2xl animate-fade-in-up">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-slate-800">Create Profile</h2>
+            <p class="text-slate-500 mt-2">Join FinBot & Manage Money Smartly</p>
+        </div>
+
+        <form method="POST" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Username</label>
+                    <input type="text" name="username" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition bg-slate-50 focus:bg-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Email</label>
+                    <input type="email" name="email" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition bg-slate-50 focus:bg-white">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Password</label>
+                <input type="password" name="password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition bg-slate-50 focus:bg-white">
+            </div>
+
+            <div class="border-t border-slate-100 pt-4 mt-2">
+                <p class="text-xs font-bold text-indigo-500 uppercase mb-3 tracking-wider">Personal Details</p>
+                
+                <div class="space-y-4">
+                    <input type="text" name="full_name" placeholder="Full Name" class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="number" name="age" placeholder="Age" class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                        <input type="text" name="occupation" placeholder="Occupation" class="w-full px-4 py-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">I am a:</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="role" value="Student" class="peer hidden">
+                                <span class="block text-center py-2 rounded-lg border border-slate-200 peer-checked:bg-indigo-600 peer-checked:text-white transition font-bold text-xs md:text-sm hover:bg-slate-50">Student 🎓</span>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="role" value="Employee" checked class="peer hidden">
+                                <span class="block text-center py-2 rounded-lg border border-slate-200 peer-checked:bg-indigo-600 peer-checked:text-white transition font-bold text-xs md:text-sm hover:bg-slate-50">Employee 💼</span>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="role" value="Startup" class="peer hidden">
+                                <span class="block text-center py-2 rounded-lg border border-slate-200 peer-checked:bg-indigo-600 peer-checked:text-white transition font-bold text-xs md:text-sm hover:bg-slate-50">Startup 🚀</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="w-full py-3.5 mt-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold shadow-lg shadow-indigo-200 hover:shadow-xl hover:scale-[1.02] transition duration-300">
+                Complete Registration
+            </button>
+        </form>
+
+        <p class="mt-6 text-center text-sm text-slate-500">
+            Already have an account? <a href="{{ url_for('login') }}" class="text-indigo-600 font-bold hover:underline">Log in</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

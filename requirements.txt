@@ -1,0 +1,12 @@
+Flask
+Flask-Login
+Werkzeug
+groq
+opencv-python
+pytesseract
+Pillow
+imagehash
+pandas
+openpyxl
+python-dateutil
+python-dotenv

@@ -1,0 +1,314 @@
+{% extends "base.html" %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 animate-fade-in-down">
+    
+    <div class="lg:col-span-1 space-y-6">
+        <div class="bg-white p-5 md:p-6 rounded-2xl shadow-[0_10px_40px_-15px_rgba(0,0,0,0.1)] border border-slate-100 lg:sticky lg:top-24">
+            <div class="flex items-center gap-3 mb-6 border-b border-slate-50 pb-4">
+                <div class="w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl">💸</div>
+                <h2 class="text-xl font-bold text-slate-800">Add Transaction</h2>
+            </div>
+            
+            <form onsubmit="submitExpense(event)" id="expense-form" class="space-y-4">
+                <div class="flex bg-slate-100 p-1.5 rounded-xl">
+                    <label class="flex-1 text-center cursor-pointer">
+                        <input type="radio" name="type" value="Debit" checked class="peer hidden">
+                        <span class="block py-2.5 rounded-lg text-sm font-bold text-slate-500 peer-checked:bg-white peer-checked:text-rose-500 peer-checked:shadow-sm transition duration-200">Debit</span>
+                    </label>
+                    <label class="flex-1 text-center cursor-pointer">
+                        <input type="radio" name="type" value="Credit" class="peer hidden">
+                        <span class="block py-2.5 rounded-lg text-sm font-bold text-slate-500 peer-checked:bg-white peer-checked:text-emerald-500 peer-checked:shadow-sm transition duration-200">Credit</span>
+                    </label>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Date</label>
+                    <input type="date" name="date" id="date" required class="w-full p-3 bg-slate-50 rounded-xl border border-transparent focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition">
+                </div>
+                
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Merchant</label>
+                    <input type="text" name="merchant" placeholder="e.g. Starbucks, Salary" required class="w-full p-3 bg-slate-50 rounded-xl border border-transparent focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Amount</label>
+                        <input type="number" step="0.01" name="amount" placeholder="0.00" required class="w-full p-3 bg-slate-50 rounded-xl border border-transparent focus:bg-white focus:border-indigo-500 outline-none transition">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Category</label>
+                        <select name="category" class="w-full p-3 bg-slate-50 rounded-xl border border-transparent focus:bg-white focus:border-indigo-500 outline-none transition">
+                            <option value="Food">🍔 Food</option>
+                            <option value="Travel">🚗 Travel</option>
+                            <option value="Shopping">🛍️ Shopping</option>
+                            <option value="Utilities">💡 Utilities</option>
+                            <option value="Salary">💰 Salary</option>
+                            <option value="Other">📦 Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-400 uppercase tracking-wider ml-1">Payment</label>
+                    <select name="payment_mode" class="w-full p-3 bg-slate-50 rounded-xl border border-transparent focus:bg-white focus:border-indigo-500 outline-none transition">
+                        <option value="UPI">📱 UPI</option>
+                        <option value="Cash">💵 Cash</option>
+                        <option value="Card">💳 Card</option>
+                        <option value="NetBanking">🏦 NetBanking</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition shadow-lg shadow-indigo-200 transform hover:scale-[1.02] active:scale-95 touch-manipulation">
+                    Add Transaction
+                </button>
+            </form>
+
+            <div class="mt-6 pt-6 border-t border-slate-100">
+                <input type="file" id="file-input" accept="image/*" hidden onchange="uploadImage()">
+                <button onclick="document.getElementById('file-input').click()" class="w-full py-3 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-slate-300 touch-manipulation">
+                    <span class="text-xl">📸</span> Scan Receipt AI
+                </button>
+                <p id="scan-status" class="text-center text-xs text-indigo-600 mt-2 font-bold min-h-[20px] animate-pulse"></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="lg:col-span-2 space-y-6 md:space-y-8">
+        
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="bg-gradient-to-br from-emerald-400 to-emerald-600 p-5 md:p-6 rounded-2xl shadow-lg text-white relative overflow-hidden group">
+                <div class="absolute -right-6 -top-6 w-24 h-24 bg-white opacity-10 rounded-full"></div>
+                <p class="text-emerald-100 text-xs font-bold uppercase tracking-wider">Total Income</p>
+                <p class="text-2xl md:text-3xl font-bold mt-1" id="kpi-income">₹0.00</p>
+            </div>
+            <div class="bg-gradient-to-br from-rose-400 to-rose-600 p-5 md:p-6 rounded-2xl shadow-lg text-white relative overflow-hidden group">
+                <div class="absolute -right-6 -top-6 w-24 h-24 bg-white opacity-10 rounded-full"></div>
+                <p class="text-rose-100 text-xs font-bold uppercase tracking-wider">Total Expense</p>
+                <p class="text-2xl md:text-3xl font-bold mt-1" id="kpi-expense">₹0.00</p>
+            </div>
+            <div class="bg-gradient-to-br from-indigo-500 to-purple-600 p-5 md:p-6 rounded-2xl shadow-lg text-white relative overflow-hidden group">
+                <div class="absolute -right-6 -top-6 w-24 h-24 bg-white opacity-10 rounded-full"></div>
+                <p class="text-indigo-100 text-xs font-bold uppercase tracking-wider">Net Balance</p>
+                <p class="text-2xl md:text-3xl font-bold mt-1" id="kpi-balance">₹0.00</p>
+            </div>
+        </div>
+
+        <div class="bg-white p-4 md:p-6 rounded-2xl shadow-[0_10px_40px_-15px_rgba(0,0,0,0.1)] border border-slate-100">
+            <div class="flex justify-between items-center mb-4 md:mb-6">
+                <h3 class="text-lg font-bold text-slate-800">Spending Trend</h3>
+            </div>
+            <div class="h-64 md:h-80">
+                <canvas id="expenseChart"></canvas>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow-[0_10px_40px_-15px_rgba(0,0,0,0.1)] border border-slate-100 mt-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-slate-800">Smart Budgets 🎯</h3>
+                <button onclick="openBudgetModal()" class="text-sm font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full hover:bg-indigo-100 transition">+ New Budget</button>
+            </div>
+            <div id="budget-list" class="space-y-4 max-h-80 overflow-y-auto pr-2">
+                </div>
+        </div>
+
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col md:flex-row gap-4 items-center justify-between mb-6">
+            <div class="flex items-center gap-2 w-full md:w-auto bg-slate-50 px-3 rounded-lg border border-slate-100">
+                <span class="text-xl">🔍</span>
+                <input type="text" id="search-input" placeholder="Search merchant..." class="w-full md:w-64 p-2 bg-transparent outline-none text-sm font-medium">
+            </div>
+            
+            <div class="flex items-center gap-2 w-full md:w-auto relative" x-data="{ open: false }">
+                <button @click="open = !open" class="flex items-center justify-between w-full md:w-48 p-2 bg-slate-50 rounded-lg border border-slate-100 text-sm font-bold text-slate-600 hover:bg-slate-100 transition">
+                    <span id="month-btn-text">🗓️ All Months</span>
+                    <span class="text-xs">▼</span>
+                </button>
+
+                <div x-show="open" @click.outside="open = false" 
+                     class="absolute top-12 right-0 w-48 bg-white border border-slate-200 rounded-xl shadow-xl z-50 p-2 max-h-60 overflow-y-auto animate-fade-in-down" style="display:none;">
+                    
+                    <div class="border-b border-slate-100 pb-2 mb-2">
+                        <label class="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer">
+                            <input type="checkbox" id="select-all-check" onchange="toggleSelectAll(this)" class="w-4 h-4 text-indigo-600 rounded"> 
+                            <span class="font-bold text-xs text-indigo-600">Select All</span>
+                        </label>
+                    </div>
+
+                    <div class="space-y-1" id="month-checkboxes">
+                        <label class="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="checkbox" value="01" class="month-check w-4 h-4 text-indigo-600 rounded"> January</label>
+                        <label class="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="checkbox" value="02" class="month-check w-4 h-4 text-indigo-600 rounded"> February</label>
+                        <label class="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="checkbox" value="03" class="month-check w-4 h-4 text-indigo-600 rounded"> March</label>
+                        <label class="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="checkbox" value="04" class="month-check w-4 h-4 text-indigo-600 rounded"> April</label>
+                        <label class="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="checkbox" value="05" class="month-check w-4 h-4 text-indigo-600 rounded"> May</label>
+                        <label class="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="checkbox" value="06" class="month-check w-4 h-4 text-indigo-600 rounded"> June</label>
+                        <label class="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="checkbox" value="07" class="month-check w-4 h-4 text-indigo-600 rounded"> July</label>
+                        <label class="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="checkbox" value="08" class="month-check w-4 h-4 text-indigo-600 rounded"> August</label>
+                        <label class="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="checkbox" value="09" class="month-check w-4 h-4 text-indigo-600 rounded"> September</label>
+                        <label class="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="checkbox" value="10" class="month-check w-4 h-4 text-indigo-600 rounded"> October</label>
+                        <label class="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="checkbox" value="11" class="month-check w-4 h-4 text-indigo-600 rounded"> November</label>
+                        <label class="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="checkbox" value="12" class="month-check w-4 h-4 text-indigo-600 rounded"> December</label>
+                    </div>
+                    
+                    <div class="border-t border-slate-100 mt-2 pt-2">
+                        <button @click="open = false; loadExpenses()" class="w-full bg-indigo-600 text-white text-xs font-bold py-2 rounded-lg shadow-md hover:bg-indigo-700 transition">Apply Filter</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-[0_10px_40px_-15px_rgba(0,0,0,0.1)] border border-slate-100 overflow-hidden">
+            <div class="p-5 md:p-6 border-b border-slate-50 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-slate-800">Transactions</h3>
+                <a href="/api/export" class="text-sm font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                    Download CSV ⬇️
+                </a>
+            </div>
+            <div class="overflow-x-auto w-full">
+                <table id="expense-table" class="w-full text-left min-w-[500px]">
+                    <thead class="bg-slate-50 text-slate-400 text-xs uppercase font-bold">
+                        <tr><th class="p-4 pl-6">Date</th><th class="p-4">Merchant</th><th class="p-4">Amount</th><th class="p-4 pr-6 text-right">Action</th></tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50 text-sm"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="verify-modal" class="fixed inset-0 bg-slate-900/60 hidden flex items-center justify-center z-50 backdrop-blur-sm transition-opacity opacity-0 px-4">
+    <div class="bg-white rounded-2xl p-5 md:p-6 w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-6 shadow-2xl scale-95 transition-transform duration-300 max-h-[85vh] overflow-y-auto" id="verify-modal-content">
+        <div class="bg-slate-100 rounded-xl p-4 flex items-center justify-center border border-slate-200 min-h-[200px]">
+            <img id="v-preview" class="max-h-[300px] md:max-h-[400px] rounded-lg object-contain shadow-sm">
+        </div>
+        <div class="flex flex-col justify-center">
+            <div class="mb-4 md:mb-6">
+                <h2 class="text-2xl font-bold text-slate-800">Verify Details</h2>
+                <p class="text-slate-500 text-sm">AI Scan complete. Please check the results.</p>
+            </div>
+            <input type="hidden" id="v-hash"><input type="hidden" id="v-flagged"><input type="hidden" id="v-reason">
+            <div class="space-y-4">
+                <div><label class="text-xs font-bold text-slate-400 uppercase ml-1">Merchant</label><input type="text" id="v-merchant" class="w-full p-3 border rounded-xl font-bold text-lg text-slate-800"></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="text-xs font-bold text-slate-400 uppercase ml-1">Date</label><input type="date" id="v-date" class="w-full p-3 border rounded-xl"></div>
+                    <div><label class="text-xs font-bold text-slate-400 uppercase ml-1">Amount</label><input type="number" id="v-amount" class="w-full p-3 border rounded-xl font-bold text-slate-800"></div>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-400 uppercase ml-1">Category</label>
+                    <select id="v-category" class="w-full p-3 border rounded-xl bg-white"><option value="Food">Food</option><option value="Travel">Travel</option><option value="Shopping">Shopping</option><option value="Utilities">Utilities</option><option value="Other">Other</option></select>
+                </div>
+                <div class="pt-4 flex gap-3 flex-col sm:flex-row">
+                    <button onclick="saveVerified()" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-lg shadow-emerald-200 transition">Confirm</button>
+                    <button onclick="closeModal('verify-modal')" class="w-full py-3 text-slate-500 hover:bg-slate-100 rounded-xl font-bold transition">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="edit-modal" class="fixed inset-0 bg-slate-900/60 hidden flex items-center justify-center z-50 backdrop-blur-sm transition-opacity opacity-0 px-4">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl scale-95 transition-transform duration-300 max-h-[85vh] overflow-y-auto" id="edit-modal-content">
+        <h2 class="text-2xl font-bold mb-6 text-slate-800">Edit Transaction</h2>
+        <input type="hidden" id="edit-id">
+        <div class="space-y-4">
+            <div class="flex gap-2 bg-slate-100 p-1 rounded-xl">
+                <label class="flex-1 text-center cursor-pointer"><input type="radio" name="edit-type" value="Debit" class="peer hidden"><span class="block py-2 rounded-lg font-bold text-slate-500 peer-checked:bg-white peer-checked:text-rose-500 shadow-sm">Debit</span></label>
+                <label class="flex-1 text-center cursor-pointer"><input type="radio" name="edit-type" value="Credit" class="peer hidden"><span class="block py-2 rounded-lg font-bold text-slate-500 peer-checked:bg-white peer-checked:text-emerald-500 shadow-sm">Credit</span></label>
+            </div>
+            <input type="date" id="edit-date" class="w-full p-3 border rounded-xl">
+            <input type="text" id="edit-merchant" class="w-full p-3 border rounded-xl">
+            <input type="number" id="edit-amount" class="w-full p-3 border rounded-xl">
+            <select id="edit-category" class="w-full p-3 border rounded-xl bg-white"><option value="Food">Food</option><option value="Travel">Travel</option><option value="Shopping">Shopping</option><option value="Utilities">Utilities</option><option value="Other">Other</option></select>
+            <div class="pt-4 flex gap-3 flex-col sm:flex-row">
+                <button onclick="saveEdit()" class="w-full py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition shadow-lg">Save Changes</button>
+                <button onclick="closeModal('edit-modal')" class="w-full py-3 text-slate-500 hover:bg-slate-100 rounded-xl font-bold transition">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="budget-modal" class="fixed inset-0 bg-slate-900/60 hidden flex items-center justify-center z-50 backdrop-blur-sm transition-opacity opacity-0 px-4">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl scale-95 transition-transform duration-300">
+        <h2 class="text-xl font-bold mb-4 text-slate-800" id="budget-modal-title">Set Budget 🎯</h2>
+        
+        <input type="hidden" id="budget-id">
+
+        <div class="space-y-3">
+            <div>
+                <label class="text-xs font-bold text-slate-400 uppercase">Category</label>
+                <select id="budget-category" class="w-full p-3 border rounded-xl bg-white mt-1">
+                    <option value="Food">Food</option>
+                    <option value="Travel">Travel</option>
+                    <option value="Shopping">Shopping</option>
+                    <option value="Utilities">Utilities</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            
+            <div>
+                <label class="text-xs font-bold text-slate-400 uppercase">Budget Amount (₹)</label>
+                <input type="number" id="budget-amount" class="w-full p-3 border rounded-xl mt-1 font-bold" placeholder="e.g. 5000">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="text-xs font-bold text-slate-400 uppercase">From</label>
+                    <input type="date" id="budget-start" class="w-full p-2 border rounded-xl mt-1 text-sm">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-400 uppercase">To</label>
+                    <input type="date" id="budget-end" class="w-full p-2 border rounded-xl mt-1 text-sm">
+                </div>
+            </div>
+
+            <div class="flex gap-2 mt-4">
+                <button onclick="saveBudget()" class="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition shadow-lg">Save</button>
+                <button onclick="closeModal('budget-modal')" class="flex-1 py-3 text-slate-500 font-semibold hover:bg-slate-50 rounded-xl">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="profile-modal" class="fixed inset-0 bg-slate-900/60 hidden flex items-center justify-center z-50 backdrop-blur-sm transition-opacity opacity-0">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl scale-95 transition-transform duration-300">
+        <h2 class="text-2xl font-bold mb-4 text-slate-800">Edit Profile 👤</h2>
+        <div class="space-y-4">
+            
+            <input type="text" id="p-name" placeholder="Full Name" value="{{ current_user.full_name or '' }}" class="w-full p-3 border rounded-xl bg-slate-50 focus:bg-white transition">
+            
+            <div class="grid grid-cols-2 gap-4">
+                <input type="number" id="p-age" placeholder="Age" value="{{ current_user.age or '' }}" class="w-full p-3 border rounded-xl bg-slate-50 focus:bg-white transition">
+                <input type="text" id="p-occupation" placeholder="Occupation" value="{{ current_user.occupation or '' }}" class="w-full p-3 border rounded-xl bg-slate-50 focus:bg-white transition">
+            </div>
+            
+            <div>
+                <label class="text-xs font-bold text-slate-400 uppercase">I am a:</label>
+                <select id="p-role" class="w-full p-3 border rounded-xl mt-1 bg-white">
+                    <option value="Student" {% if current_user.role == 'Student' %}selected{% endif %}>Student 🎓</option>
+                    <option value="Employee" {% if current_user.role == 'Employee' %}selected{% endif %}>Employee 💼</option>
+                    <option value="Startup" {% if current_user.role == 'Startup' %}selected{% endif %}>Startup 🚀</option>
+                </select>
+            </div>
+            
+            <button onclick="saveProfile()" class="w-full py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition shadow-lg">Save Profile</button>
+            <button onclick="closeModal('profile-modal')" class="w-full py-2 text-slate-500 font-semibold">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div class="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-40 flex flex-col items-end">
+    <div id="chat-window" class="hidden bg-white w-[90vw] md:w-80 h-[50vh] md:h-96 rounded-2xl shadow-2xl border border-slate-200 mb-4 flex flex-col overflow-hidden animate-fade-in-up origin-bottom-right">
+        <div class="bg-indigo-600 p-4 text-white font-bold flex justify-between shadow-md"><span>🤖 FinBot</span><button onclick="toggleChat()" class="hover:text-indigo-200">✕</button></div>
+        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-50"></div>
+        <div class="p-3 bg-white border-t flex gap-2">
+            <input type="text" id="chat-input" class="flex-1 bg-slate-100 rounded-full px-4 text-sm outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Ask AI...">
+            <button onclick="sendMessage()" class="bg-indigo-600 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-indigo-700 shadow-md">➤</button>
+        </div>
+    </div>
+    <button onclick="toggleChat()" class="bg-indigo-600 text-white w-12 h-12 md:w-14 md:h-14 rounded-full shadow-xl shadow-indigo-300 flex items-center justify-center text-xl md:text-2xl hover:scale-110 transition active:scale-95 ring-4 ring-indigo-50">💬</button>
+</div>
+
+<script src="/static/js/script.js"></script>
+{% endblock %}
