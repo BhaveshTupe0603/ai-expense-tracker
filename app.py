@@ -15,7 +15,8 @@ from ai_assistant import get_ai_insight, clean_receipt_with_ai
 load_dotenv()
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'dev-secret-key-change-in-production' 
+# Use the environment variable if available, otherwise fallback to dev key
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 
 
