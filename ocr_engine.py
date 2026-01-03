@@ -9,7 +9,7 @@ from dateutil import parser
 
 # --- TESSERACT CONFIGURATION ---
 # If you uncommented this in test_setup.py, UNCOMMENT IT HERE TOO:
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+# pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 def preprocess_image(image_path):
     """
