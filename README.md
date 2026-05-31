@@ -1,44 +1,86 @@
-AI-Powered Smart Expense Tracker 📊🤖
+# AI-Powered Smart Expense Tracker 📊🤖
+
 A modern, full-stack financial dashboard that automates expense tracking by extracting structured data from unstructured receipt images using Computer Vision and Natural Language Processing.
 
-Traditional expense trackers rely on tedious manual data entry. This application solves that by introducing an AI receipt scanner with a "human-in-the-loop" verification system, alongside a robust fraud detection engine that prevents duplicate billing.
+Traditional expense trackers rely on tedious manual data entry. This application solves that by introducing an AI-powered receipt scanner with a human-in-the-loop verification system, alongside a fraud detection engine that prevents duplicate billing.
 
-✨ Key Features
-Intelligent Receipt Scanning: Utilizes OpenCV for image preprocessing (denoising, thresholding) and Tesseract OCR to extract raw text from uploaded bills.
+---
 
-Automated Data Parsing: Custom regex pipelines parse unstructured OCR text to accurately identify Merchants, Dates, Totals, and automatically categorize expenses based on keyword heuristics.
+## ✨ Key Features
 
-Fraud & Duplicate Detection: Implements perceptual image hashing (imagehash) to calculate Hamming distances between uploads, instantly flagging duplicate or visually identical receipts to ensure financial data integrity.
+### 🧾 Intelligent Receipt Scanning
+- Utilizes OpenCV for image preprocessing, including denoising and thresholding.
+- Uses Tesseract OCR to extract raw text from uploaded receipt images.
+- Enhances image quality to improve OCR accuracy.
 
-Human-in-the-Loop Verification: Seamless UI flow that allows users to review and correct AI-extracted data before committing it to the database.
+### 🔍 Automated Data Parsing
+- Custom regex-based pipelines extract:
+  - Merchant Name
+  - Transaction Date
+  - Total Amount
+- Automatically categorizes expenses using keyword-based heuristics.
 
-Interactive Financial Dashboard: Real-time KPI tracking (Income, Expense, Balance) with dynamic Monthly/Daily charting powered by Chart.js.
+### 🛡️ Fraud & Duplicate Detection
+- Implements perceptual image hashing using ImageHash.
+- Calculates Hamming distances between uploaded receipts.
+- Detects and flags duplicate or visually similar receipts to maintain data integrity.
 
-One-Click Export: Generates clean, formatted Excel reports of all transactions using the Pandas library.
+### 👨‍💻 Human-in-the-Loop Verification
+- Allows users to review and edit AI-extracted information before saving.
+- Ensures accuracy and reliability of financial records.
 
-🛠️ Tech Stack
-Backend: Python, Flask, SQLite
+### 📈 Interactive Financial Dashboard
+- Real-time KPI tracking:
+  - Total Income
+  - Total Expenses
+  - Current Balance
+- Dynamic daily and monthly analytics powered by Chart.js.
 
-AI & Computer Vision: OpenCV, Tesseract OCR (pytesseract), Pillow, ImageHash
+### 📊 One-Click Excel Export
+- Generates formatted Excel reports using Pandas.
+- Enables quick sharing and record management.
 
-Data Processing: Pandas, Regex (re), Python-dateutil
+---
 
-Frontend: HTML5, CSS3 (Modern Glassmorphism UI), Vanilla JavaScript, Chart.js
+## 🛠️ Tech Stack
 
-For Your Resume
-For a resume, you need punchy, action-oriented bullet points that focus on your technical achievements, the algorithms used, and the impact of the features.
+### Backend
+- Python
+- Flask
+- SQLite
 
-Project Title: AI-Powered Smart Expense Tracker
-Technologies: Python, Flask, OpenCV, Tesseract OCR, JavaScript, SQLite, Pandas
+### AI & Computer Vision
+- OpenCV
+- Tesseract OCR (pytesseract)
+- Pillow
+- ImageHash
 
-Developed a full-stack financial management dashboard integrating an AI-driven receipt scanner to automate manual data entry and categorize transactions.
+### Data Processing
+- Pandas
+- Regular Expressions (re)
+- Python-dateutil
 
-Engineered a computer vision pipeline using OpenCV for image preprocessing (thresholding, denoising) to optimize unstructured receipt images for text extraction via Tesseract OCR.
+### Frontend
+- HTML5
+- CSS3 (Glassmorphism UI)
+- Vanilla JavaScript
+- Chart.js
 
-Designed a custom regex-based parsing engine to extract precise data points (Merchant, Date, Amount) from raw OCR output, combined with keyword heuristics for automated expense classification.
+---
 
-Implemented a robust fraud detection system utilizing perceptual image hashing to calculate Hamming distances, successfully identifying and flagging duplicate receipt uploads to maintain data integrity.
+## 📌 Resume Description
 
-Built a responsive Single Page Application (SPA) using Vanilla JavaScript and CSS, featuring a "human-in-the-loop" data verification UI and real-time financial data visualization using Chart.js.
+### Project Title
+**AI-Powered Smart Expense Tracker**
 
-Architected a RESTful Flask API integrated with a SQLite database for persistent storage, and utilized Pandas to enable one-click generation of Excel-formatted financial reports.
+### Technologies
+**Python, Flask, OpenCV, Tesseract OCR, JavaScript, SQLite, Pandas**
+
+### Resume Bullet Points
+
+- Developed a full-stack financial management dashboard integrating an AI-powered receipt scanner to automate expense tracking and transaction categorization.
+- Engineered a computer vision pipeline using OpenCV for image preprocessing (thresholding, denoising) to optimize receipt images for text extraction via Tesseract OCR.
+- Designed a custom regex-based parsing engine to extract merchant, date, and amount information from OCR output while automating expense classification through keyword heuristics.
+- Implemented a fraud detection system using perceptual image hashing and Hamming distance calculations to identify and flag duplicate receipt uploads.
+- Built a responsive single-page application (SPA) featuring human-in-the-loop verification workflows and interactive financial visualizations using Chart.js.
+- Architected RESTful Flask APIs integrated with SQLite for persistent transaction storage and leveraged Pandas to generate Excel-based financial reports.
